@@ -20,7 +20,7 @@ namespace MyAwesomeMediaManager
     public partial class MainForm : Form
     {
         // UI elements
-        private FlowLayoutPanel flowPanel;
+        private NoAutoScrollFlowLayoutPanel flowPanel;
         private Panel titleBar;
         private Button closeBtn;
         private Button maxBtn;
@@ -141,7 +141,7 @@ namespace MyAwesomeMediaManager
             this.Controls.Add(containerPanel);
 
             // FlowLayoutPanel for media thumbnails, docked inside containerPanel
-            flowPanel = new FlowLayoutPanel
+            flowPanel = new NoAutoScrollFlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoScroll = true,

@@ -28,16 +28,28 @@ public class ThumbnailPreviewForm : Form
         Deactivate += (s, e) => Close();
     }
 
+    protected override CreateParams CreateParams
+    {
+        get
+        {
+            const int WS_EX_NOACTIVATE = 0x08000000;
+            var cp = base.CreateParams;
+            cp.ExStyle |= WS_EX_NOACTIVATE;
+            return cp;
+        }
+    }
+
     public void ShowNear(Control parent)
     {
         var mainForm = parent.FindForm();
         if (mainForm == null) return;
 
-        Rectangle appBounds = mainForm.RectangleToScreen(mainForm.ClientRectangle);
+        var screenBounds = Screen.FromControl(mainForm).WorkingArea;
+        Rectangle appBounds = screenBounds;
         Point parentScreenPos = parent.PointToScreen(Point.Empty);
 
-        int maxPopupWidth = (int)(appBounds.Width * 0.8);
-        int maxPopupHeight = (int)(appBounds.Height * 0.8);
+        int maxPopupWidth = (int)(screenBounds.Width * 0.8);
+        int maxPopupHeight = (int)(screenBounds.Height * 0.8);
 
         // Calculate the preview size to fit within maxPopupWidth x maxPopupHeight, preserving aspect ratio
         int imgW = previewBox.Image.Width;
