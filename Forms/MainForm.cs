@@ -71,6 +71,16 @@ namespace MyAwesomeMediaManager
 
         private void MainForm_Resize(object? sender, EventArgs e)
         {
+            // Adjust padding based on window state to emulate Chrome-like border
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                this.Padding = new Padding(0);
+            }
+            else
+            {
+                this.Padding = new Padding(2);
+            }
+
             LayoutThumbnails();
         }
 
@@ -79,7 +89,8 @@ namespace MyAwesomeMediaManager
         {
             // Form settings
             this.FormBorderStyle = FormBorderStyle.None;
-            this.Padding = new Padding(10); // padding for resize area
+            // Small padding so window has a subtle border when not maximized
+            this.Padding = new Padding(2);
             this.BackColor = Color.FromArgb(30, 30, 30);
             this.ForeColor = Color.White;
             this.Font = new Font("Segoe UI", 10);
@@ -200,6 +211,9 @@ namespace MyAwesomeMediaManager
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
+
+            // Constrain maximized bounds to working area so taskbar remains visible
+            this.MaximizedBounds = Screen.FromHandle(this.Handle).WorkingArea;
 
             // Make window resizable with borderless style
             int style = NativeMethods.GetWindowLong(this.Handle, GWL_STYLE);
