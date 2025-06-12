@@ -28,20 +28,6 @@ namespace MyAwesomeMediaManager.Forms
             ForeColor = Color.White;
             BorderStyle = BorderStyle.None;
 
-            void ApplyHoverHandlers(Control control)
-            {
-                control.MouseEnter += (s, e) => this.BackColor = Color.FromArgb(60, 60, 60);
-                control.MouseLeave += (s, e) =>
-                {
-                    if (!this.ClientRectangle.Contains(this.PointToClient(Cursor.Position)))
-                    {
-                        this.BackColor = ratingControl.CurrentRating > 0 ? Color.FromArgb(45, 45, 45) : Color.FromArgb(70, 60, 30);
-                    }
-                };
-
-                foreach (Control child in control.Controls)
-                    ApplyHoverHandlers(child);
-            }
 
             thumbnailBox = new PictureBox
             {
@@ -102,9 +88,6 @@ namespace MyAwesomeMediaManager.Forms
 
             Controls.Add(thumbnailBox);
             Controls.Add(ratingControl);
-
-            // Wire hover events after child controls are in place
-            ApplyHoverHandlers(this);
 
             thumbnailBox.MouseEnter += (s, e) =>
             {
