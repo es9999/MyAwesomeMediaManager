@@ -428,29 +428,52 @@ namespace MyAwesomeMediaManager.Forms
         {
             if (!File.Exists(filePath)) return;
 
+            bool isVideo = IsVideoFile(filePath);
+            bool isImage = IsImageFile(filePath);
+
             if (_videoView != null)
             {
                 this.Controls.Remove(_videoView);
                 _videoView.Dispose();
+                _videoView = null;
             }
 
-            _libVLC = new LibVLC();
-            _mediaPlayer = new VLCMediaPlayer(_libVLC);
-
-            _videoView = new VideoView
+            if (_imageBox != null)
             {
-                MediaPlayer = _mediaPlayer,
-                Dock = DockStyle.Fill,
-                BackColor = Color.Black
-            };
-            this.Controls.Add(_videoView);
-            _videoView.BringToFront();
+                this.Controls.Remove(_imageBox);
+                _imageBox.Dispose();
+                _imageBox = null;
+            }
 
-            var media = new Media(_libVLC, new Uri(filePath));
-            _mediaPlayer.Play(media);
+            if (isVideo)
+            {
+                _libVLC = new LibVLC();
+                _mediaPlayer = new VLCMediaPlayer(_libVLC);
 
-            bool isVideo = IsVideoFile(filePath);
-            bool isImage = IsImageFile(filePath);
+                _videoView = new VideoView
+                {
+                    MediaPlayer = _mediaPlayer,
+                    Dock = DockStyle.Fill,
+                    BackColor = Color.Black
+                };
+                this.Controls.Add(_videoView);
+                _videoView.BringToFront();
+
+                var media = new Media(_libVLC, new Uri(filePath));
+                _mediaPlayer.Play(media);
+            }
+            else if (isImage)
+            {
+                _imageBox = new PictureBox
+                {
+                    Image = Image.FromFile(filePath),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Dock = DockStyle.Fill,
+                    BackColor = Color.Black
+                };
+                this.Controls.Add(_imageBox);
+                _imageBox.BringToFront();
+            }
 
             AddPlaybackControls(showPlaybackControls: isVideo);
             _controlPanel?.BringToFront();
