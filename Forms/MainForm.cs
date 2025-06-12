@@ -49,6 +49,9 @@ namespace MyAwesomeMediaManager
 
         private const int RESIZE_HANDLE_SIZE = 10;
 
+        private static readonly Color BORDER_COLOR = Color.DarkBlue;
+        private const int BORDER_THICKNESS = 2;
+
         public MainForm()
         {
             InitializeComponent();
@@ -82,6 +85,7 @@ namespace MyAwesomeMediaManager
             }
 
             LayoutThumbnails();
+            this.Invalidate();
         }
 
 
@@ -335,6 +339,23 @@ namespace MyAwesomeMediaManager
             // Force layout update and redraw
             flowPanel.PerformLayout();
             flowPanel.Invalidate();
+        }
+
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            if (this.WindowState != FormWindowState.Maximized)
+            {
+                ControlPaint.DrawBorder(
+                    e.Graphics,
+                    this.ClientRectangle,
+                    BORDER_COLOR, BORDER_THICKNESS, ButtonBorderStyle.Solid,
+                    Color.Transparent, 0, ButtonBorderStyle.None,
+                    BORDER_COLOR, BORDER_THICKNESS, ButtonBorderStyle.Solid,
+                    BORDER_COLOR, BORDER_THICKNESS, ButtonBorderStyle.Solid);
+            }
         }
 
 
