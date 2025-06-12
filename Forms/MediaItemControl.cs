@@ -43,8 +43,6 @@ namespace MyAwesomeMediaManager.Forms
                     ApplyHoverHandlers(child);
             }
 
-            ApplyHoverHandlers(this);
-
             thumbnailBox = new PictureBox
             {
                 SizeMode = PictureBoxSizeMode.Zoom,
@@ -104,6 +102,9 @@ namespace MyAwesomeMediaManager.Forms
 
             Controls.Add(thumbnailBox);
             Controls.Add(ratingControl);
+
+            // Wire hover events after child controls are in place
+            ApplyHoverHandlers(this);
 
             thumbnailBox.MouseEnter += (s, e) =>
             {
