@@ -11,7 +11,7 @@ namespace MyAwesomeMediaManager.Forms
     public class StarRatingControl : Control
     {
         private int starCount = 5;
-        private int currentRating = 1;
+        private int currentRating = 0;
         private int hoverRating = 0;
 
         public event EventHandler<int>? RatingChanged;
@@ -31,7 +31,7 @@ namespace MyAwesomeMediaManager.Forms
             get => currentRating;
             set
             {
-                if (value < 1) value = 1;
+                if (value < 0) value = 0;
                 if (value > StarCount) value = StarCount;
                 currentRating = value;
                 Invalidate();
