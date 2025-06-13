@@ -16,9 +16,15 @@ namespace MyAwesomeMediaManager
 
             var folders = DatabaseHelper.GetAllFolders();
             if (folders.Count == 0)
+            {
                 Application.Run(new FolderSetupForm());
+            }
             else
-                Application.Run(new MainForm());
+            {
+                var main = new MainForm();
+                main.WindowState = FormWindowState.Maximized;
+                Application.Run(main);
+            }
         }
 
     }
