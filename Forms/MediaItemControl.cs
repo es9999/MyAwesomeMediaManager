@@ -89,50 +89,17 @@ namespace MyAwesomeMediaManager.Forms
             Controls.Add(thumbnailBox);
             Controls.Add(ratingControl);
 
-            thumbnailBox.MouseEnter += (s, e) =>
-            {
-                if (previewForm != null) return;
+            // Unified hover handling for tile and thumbnail
+            this.MouseEnter += (s, e) => UpdateHoverState();
+            this.MouseMove += (s, e) => UpdateHoverState();
+            this.MouseLeave += (s, e) => HidePreview();
 
-                string ext = Path.GetExtension(FilePath).ToLower();
-                Image previewImage;
+            thumbnailBox.MouseEnter += (s, e) => UpdateHoverState();
+            thumbnailBox.MouseMove += (s, e) => UpdateHoverState();
+            thumbnailBox.MouseLeave += (s, e) => HidePreview();
 
-                if (ext is ".jpg" or ".jpeg" or ".png" or ".gif" or ".bmp")
-                {
-                    try
-                    {
-                        previewImage = Image.FromFile(FilePath); // FULL-RES original
-                    }
-                    catch
-                    {
-                        previewImage = SystemIcons.Error.ToBitmap();
-                    }
-                }
-                else
-                {
-                    if (thumbnailBox.Image == null) return;
-                    previewImage = thumbnailBox.Image; // use same large thumbnail for video/other
-                }
-
-                // Reference the top-level form (your main window)
-                var mainForm = this.FindForm();
-                if (mainForm == null) return;
-
-                int previewHeight = (int)(mainForm.ClientSize.Height * 0.8f);
-                float aspectRatio = (float)previewImage.Width / previewImage.Height;
-                int previewWidth = (int)(previewHeight * aspectRatio);
-
-                previewForm = new ThumbnailPreviewForm(previewImage, new Size(previewWidth, previewHeight));
-                previewForm.ShowNear(this);
-            };
-
-            thumbnailBox.MouseLeave += (s, e) =>
-            {
-                if (previewForm != null)
-                {
-                    previewForm.Close();
-                    previewForm = null;
-                }
-            };
+            ratingControl.MouseEnter += (s, e) => HidePreview();
+            ratingControl.MouseLeave += (s, e) => UpdateHoverState();
 
             this.Click += (s, e) => OnThumbnailClicked();
             thumbnailBox.Click += (s, e) => OnThumbnailClicked();
@@ -201,6 +168,66 @@ namespace MyAwesomeMediaManager.Forms
             catch
             {
                 thumbnailBox.Image = SystemIcons.Error.ToBitmap();
+            }
+        }
+
+        private void ShowPreview()
+        {
+            if (previewForm != null) return;
+
+            string ext = Path.GetExtension(FilePath).ToLower();
+            Image previewImage;
+
+            if (ext is ".jpg" or ".jpeg" or ".png" or ".gif" or ".bmp")
+            {
+                try
+                {
+                    previewImage = Image.FromFile(FilePath);
+                }
+                catch
+                {
+                    previewImage = SystemIcons.Error.ToBitmap();
+                }
+            }
+            else
+            {
+                if (thumbnailBox.Image == null) return;
+                previewImage = thumbnailBox.Image;
+            }
+
+            var mainForm = this.FindForm();
+            if (mainForm == null) return;
+
+            int previewHeight = (int)(mainForm.ClientSize.Height * 0.8f);
+            float aspectRatio = (float)previewImage.Width / previewImage.Height;
+            int previewWidth = (int)(previewHeight * aspectRatio);
+
+            previewForm = new ThumbnailPreviewForm(previewImage, new Size(previewWidth, previewHeight));
+            previewForm.ShowNear(this);
+        }
+
+        private void HidePreview()
+        {
+            if (previewForm != null)
+            {
+                previewForm.Close();
+                previewForm = null;
+            }
+        }
+
+        private void UpdateHoverState()
+        {
+            Point pos = this.PointToClient(Cursor.Position);
+            bool overTile = this.ClientRectangle.Contains(pos);
+            bool overRating = ratingControl.Bounds.Contains(pos);
+
+            if (overTile && !overRating)
+            {
+                ShowPreview();
+            }
+            else
+            {
+                HidePreview();
             }
         }
 
