@@ -234,8 +234,13 @@ namespace MyAwesomeMediaManager.Forms
 
         private void OnThumbnailClicked()
         {
+            // Hide any preview popup before opening the modal viewer
+            HidePreview();
+
             var modal = new MediaModalForm(FilePath, FindForm());
             modal.Show();
+            // Ensure the modal stays above other windows
+            modal.BringToFront();
         }
 
     }
